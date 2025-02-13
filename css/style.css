@@ -1,6 +1,6 @@
 body {
-  color: red;
-  background-color: black;
+  color: #ff0000;
+  background-color: #000000;
   font-family: "Lucida Console", "Courier New", monospace;
   line-height: 1.5;
   margin: 0;
@@ -22,16 +22,16 @@ p, center, main {
 } 
 
 header {
-  border-top: 1px solid red;
-  border-bottom: 1px solid red;
+  border-top: 1px solid #ff0000;
+  border-bottom: 1px solid #ff0000;
 }
 
 footer {
-  border-top: 1px solid red;
+  border-top: 1px solid #ff0000;
   margin-top: 1rem;
 }
 
 a {
-  color: maroon;
+  color: #ff69b4;
   text-decoration: none;
 }
