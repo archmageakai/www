@@ -35,3 +35,17 @@ a {
   color: #800000;
   text-decoration: none;
 }
+
+hr {
+  border: none;
+  text-align: center;
+  max-width: 100%;
+  margin: 1rem auto;
+}
+
+hr::before {
+  content: "♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡";
+  letter-spacing: 3px;
+  display: block;
+  text-align: center;
+}
