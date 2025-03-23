@@ -218,7 +218,7 @@ async function loadJSON() {
         const bladesResponse = await fetch('blade.json', { cache: 'no-store' });
         bladesData = await bladesResponse.json();
 
-        updatePlayerData(); // Update display only when data changes
+        updateDisplay(); // Update display (either player details or player list)
     } catch (error) {
         console.error('Error loading JSON:', error);
     }
@@ -241,18 +241,29 @@ function getBladeName(bladeID) {
     return blade ? blade.blade_name : "Unknown Blade";
 }
 
-// Function to update player data
-function updatePlayerData() {
+// Function to update player data or display all players
+function updateDisplay() {
     let resultDiv = document.getElementById("result");
     
     if (!jsonData || !jsonData.users) {
-        resultDiv.innerHTML = "<p>Loading. . .</p>";
+        resultDiv.innerHTML = "<p>Error: Data not loaded correctly.</p>";
         return;
     }
 
     // Get player name from URL hash (e.g., #Moon)
     let playerName = decodeURIComponent(window.location.hash.slice(1)).trim();
-    if (!playerName || playerName === lastLoadedPlayer) return; // Skip redundant updates
+
+    if (!playerName) {
+        // No player selected, show all players
+        resultDiv.innerHTML = "<h2>Players List</h2><ul>";
+        jsonData.users.forEach(user => {
+            resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name}</a></li>`;
+        });
+        resultDiv.innerHTML += "</ul>";
+        return;
+    }
+
+    if (playerName === lastLoadedPlayer) return; // Skip redundant updates
 
     let player = jsonData.users.find(user => user.player_name === playerName);
 
@@ -301,12 +312,12 @@ function updatePlayerData() {
 }
 
 // Detect hash change (user switches to another player)
-window.onhashchange = updatePlayerData;
+window.onhashchange = updateDisplay;
 
 // Initial Load
 window.onload = function () {
     loadJSON(); // Load initial data
-    updatePlayerData(); // Load player if hash exists
+    updateDisplay(); // Load player if hash exists or show list
 };
 
 // Refresh JSON every second without unnecessary clearing
