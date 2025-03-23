@@ -59,9 +59,9 @@ function getBladeName(bladeID) {
 function updateDisplay() {
     let resultDiv = document.getElementById("result");
     
-    //if (!jsonData || !jsonData.users) {
-    //    resultDiv.innerHTML = "<p>No player data found. Please try again later.</p>";
-    //    return;
+    if (!jsonData || !jsonData.users) {
+        resultDiv.innerHTML = "<p>loading....</p>";
+        return;
     }
 
     // Get player name from URL hash (e.g., #Moon)
