@@ -197,62 +197,48 @@
     </style>
     
     <script>
-        let jsonData = {};
-        let itemsData = {};
-        let bladesData = {}; // To store blade data
+let jsonData = {};
+let itemsData = {};
+let bladesData = {};
+let lastLoadedPlayer = ""; // Cache last loaded player
 
-        // Function to load the users JSON data and blades data
-        async function loadJSON() {
-            try {
-                const userResponse = await fetch('users.json', { cache: 'no-store' }); // Force no-cache to always load fresh data
-                jsonData = await userResponse.json();
+// Function to load JSON data
+async function loadJSON() {
+    try {
+        const userResponse = await fetch('users.json', { cache: 'no-store' });
+        jsonData = await userResponse.json();
 
-                const itemsResponse = await fetch('items.json', { cache: 'no-store' });
-                itemsData = await itemsResponse.json();
+        const itemsResponse = await fetch('items.json', { cache: 'no-store' });
+        itemsData = await itemsResponse.json();
 
-                const bladesResponse = await fetch('blade.json', { cache: 'no-store' }); // Corrected file name to blade.json
-                bladesData = await bladesResponse.json();
+        const bladesResponse = await fetch('blade.json', { cache: 'no-store' });
+        bladesData = await bladesResponse.json();
 
-                // After loading the data, update the player display if there's any active search
-                if (document.getElementById("search").value) {
-                    searchPlayer();  // Re-run search with the updated data
-                }
-            } catch (error) {
-                console.error('Error loading JSON:', error);
-            }
-        }
+        updatePlayerData(); // Update display if player hash exists
+    } catch (error) {
+        console.error('Error loading JSON:', error);
+    }
+}
 
-        // Set an interval to load new data every 1 second (1000 ms)
-        setInterval(loadJSON, 1000);  // Updates every 1 second
+// Function to format numbers
+function formatNumber(value) {
+    return (typeof value === 'number' && !Number.isInteger(value)) ? value.toFixed(2) : value.toString();
+}
 
+// Get item name by ID
+function getItemName(itemID) {
+    const item = itemsData.items.find(i => i.item_ID === itemID);
+    return item ? item.item_name : "Unknown Item";
+}
 
+// Get blade name by ID
+function getBladeName(bladeID) {
+    const blade = bladesData.blades.find(b => b.blade_ID === bladeID);
+    return blade ? blade.blade_name : "Unknown Blade";
+}
 
-
-        // Function to format number to string with decimals if needed
-        function formatNumber(value) {
-            if (typeof value === 'number' && !Number.isInteger(value)) {
-                return value.toFixed(2); // Ensure two decimal places for floats
-            }
-            return value.toString(); // Return as is if it's already a string or integer
-        }
-
-        // Function to get the item name based on item_ID
-        function getItemName(itemID) {
-            const item = itemsData.items.find(i => i.item_ID === itemID);
-            return item ? item.item_name : "Unknown Item"; // Return item name or "Unknown Item" if not found
-        }
-
-        // Function to get the blade name based on blade_ID
-        function getBladeName(bladeID) {
-            const blade = bladesData.blades.find(b => b.blade_ID === bladeID);
-            return blade ? blade.blade_name : "Unknown Blade"; // Return blade name or "Unknown Blade" if not found
-        }
-
-// Function to search for a player and display their details
-async function searchPlayer() {
-    await loadJSON(); // Always reload JSON to get the latest data
-
-    let input = document.getElementById("search").value;
+// Function to update player data
+function updatePlayerData() {
     let resultDiv = document.getElementById("result");
     resultDiv.innerHTML = "";
 
@@ -261,16 +247,15 @@ async function searchPlayer() {
         return;
     }
 
-    let playerName = input.trim();
-
-    // If there's a URL hash (e.g., #user), use that instead of the input
-    if (window.location.hash) {
-        playerName = decodeURIComponent(window.location.hash.substring(1)); // Decode hash part
-    }
+    // Get player name from URL hash (e.g., #Moon)
+    let playerName = decodeURIComponent(window.location.hash.slice(1)).trim();
+    if (!playerName || playerName === lastLoadedPlayer) return; // Skip if same player
 
     let player = jsonData.users.find(user => user.player_name === playerName);
 
     if (player) {
+        lastLoadedPlayer = playerName; // Cache the loaded player name
+
         let yen = formatNumber(player.currencies.yen);
         let grossYen = formatNumber(player.currencies.gross_yen);
         let todayGacha = formatNumber(player.gacha.today);
@@ -281,7 +266,7 @@ async function searchPlayer() {
         resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
         resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
 
-        // Displaying Items
+        // Display Items
         resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
         if (Object.keys(player.items).length > 0) {
             let itemIndex = 1;
@@ -294,7 +279,7 @@ async function searchPlayer() {
             resultDiv.innerHTML += `<p>No items</p>`;
         }
 
-        // Displaying Blades
+        // Display Blades
         resultDiv.innerHTML += `<u><strong>Blades</strong></u>`;
         if (Object.keys(player.blades).length > 0) {
             let bladeIndex = 1;
@@ -307,86 +292,22 @@ async function searchPlayer() {
         } else {
             resultDiv.innerHTML += `<p>No blades</p>`;
         }
-
-        window.location.hash = `#${player.player_name}`;
     } else {
         resultDiv.innerHTML = `<p>Player not found</p>`;
     }
 }
 
-        // Load users.json and store player names
-        let playerNames = [];
+// Detect hash change (user switches to another player)
+window.onhashchange = updatePlayerData;
 
-        async function loadPlayerNames() {
-            try {
-                const response = await fetch('users.json', { cache: 'no-store' });
-                const data = await response.json();
-                playerNames = data.users.map(user => user.player_name);
-            } catch (error) {
-                console.error('Error loading player names:', error);
-            }
-        }
-
-function suggestPlayers() {
-    let input = document.getElementById("search").value.toLowerCase().trim();
-    let suggestionsDiv = document.getElementById("suggestions");
-    suggestionsDiv.innerHTML = ""; // Clear previous suggestions
-
-    if (!input) {
-        suggestionsDiv.style.display = "none"; // Hide suggestions if input is empty
-        return; // Exit if input is empty
-    }
-
-    // Find matching player names that contain the input (case-insensitive)
-    let matches = playerNames.filter(name => 
-        name.toLowerCase().includes(input) && input.length > 0 // Ensure input length is more than 0
-    ).slice(0, 5); // Limit to 5 suggestions
-
-    if (matches.length === 0) {
-        suggestionsDiv.style.display = "none"; // Hide suggestions if no matches found
-        return;
-    }
-
-    // Show suggestions box
-    suggestionsDiv.style.display = "block";
-
-    matches.forEach(name => {
-        let suggestion = document.createElement("div");
-        suggestion.classList.add("suggestion");
-        suggestion.textContent = name;
-
-        suggestion.onclick = () => {
-            document.getElementById("search").value = name;
-            suggestionsDiv.innerHTML = ""; // Clear the suggestions box after a suggestion is clicked
-            suggestionsDiv.style.display = "none"; // Hide the suggestions box
-            searchPlayer(); // Perform the search automatically
-        };
-
-        suggestionsDiv.appendChild(suggestion);
-    });
-}
-
-
-// Check if a player hash is already in the URL when the page is loaded
+// Initial Load
 window.onload = function () {
-    const playerNameFromHash = window.location.hash.slice(1); // Get player name from the URL hash
-    if (playerNameFromHash) {
-        document.getElementById("search").value = playerNameFromHash; // Set the search input to match the player from the hash
-        searchPlayer(); // Perform the search automatically based on the hash
-    }
-
-    loadPlayerNames().then(() => {
-        // Restore last search if available
-        const lastSearch = sessionStorage.getItem('lastSearch');
-        if (lastSearch) {
-            document.getElementById("search").value = lastSearch;
-            searchPlayer(); // Auto-search
-        }
-    });
-
-    // Attach input event listener for live suggestions
-    document.getElementById("search").addEventListener("input", suggestPlayers);
+    loadJSON(); // Load initial data
+    updatePlayerData(); // Load player if hash exists
 };
+
+// Refresh JSON every second without clearing display
+setInterval(loadJSON, 1000);
     </script>
 
 </head>
