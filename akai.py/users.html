@@ -9,62 +9,6 @@
 	
     <title>ギコっぽいの赤いネス</title>
     <style>
-        /* FOR TESTING PURPOSES */
-        /* AKAI CSS */
-        body {
-            color: #ff0000;
-            background-color: #000000;
-            font-family: "Lucida Console", "Courier New", monospace;
-            line-height: 1.5;
-            margin: 0;
-            padding: 1rem;
-            max-width: 700px;
-        }
-
-        p, center, main {
-            font-size: 13px;
-        }
-
-        .content {  
-            margin-bottom: 2rem;  
-        }  
-
-        .navbar {
-            display: flex;  
-            align-items: center;  
-        } 
-
-        header {
-            border-top: 1px solid #ff0000;
-            border-bottom: 1px solid #ff0000;
-        }
-
-        footer {
-            border-top: 1px solid #ff0000;
-            margin-top: 1rem;
-        }
-
-        a {
-            color: #800000;
-            text-decoration: none;
-        }
-
-        hr {
-            border: none;
-            text-align: center;
-            max-width: 700px;
-            margin: 1rem auto;
-        }
-
-        hr::before {
-            content: " ♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡ ";
-            color: #ff0000;
-            letter-spacing: 3px;
-            display: block;
-            text-align: center;
-        }
-        /* END AKAI CSS SHEET */
-
         /* gachapon css start */
         table, th, td {
             border: 1px solid #ff0000 !important;
@@ -82,7 +26,6 @@
             color: #ff0000;  /* Ensure text color is red */
         }
 
-        /* Rest of your existing CSS */
         table {
             width: 100%;
             border-collapse: collapse;
@@ -108,7 +51,7 @@
         .image-cell img {
             width: 100%;
             height: 100%;
-            object-fit: contain; /* Ensures image fits without distortion */
+            object-fit: contain;
             display: block;
         }
 
@@ -143,7 +86,18 @@
             height: 42px; /* Match the button height */
             box-sizing: border-box; /* Ensures padding doesn't affect size */
         }
-
+		
+		#loading {
+		display: none;
+		position: fixed;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		font-size: 24px;
+		color: #ff0000;
+		font-weight: bold;
+		}
+		
         /* Suggestions box */
         .suggestions-box {
             background-color: #333333;
@@ -219,8 +173,10 @@
                 }
             } catch (error) {
                 console.error('Error loading JSON:', error);
-            }
-        }
+			} finally {
+				document.getElementById("loading").style.display = "none"; // Hide the loading message when done
+			}
+		}
 
         // Set an interval to load new data every 1 second (1000 ms)
         setInterval(loadJSON, 1000);  // Updates every 1 second
@@ -397,6 +353,7 @@ window.onload = function () {
     <input type="text" id="search" placeholder="Enter player name" autocomplete="off">
     <button onclick="searchPlayer()">Search</button>
 	<div id="suggestions" class="suggestions-box"></div>
+	<div id="loading">Loading...</div>
     <div id="result"></div>
 </body>
 </html>
