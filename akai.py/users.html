@@ -9,7 +9,7 @@
 	
     <title>ギコっぽいの赤いネス</title>
     
-    <script>
+<script>
 let jsonData = {};
 let itemsData = {};
 let bladesData = {};
@@ -34,6 +34,7 @@ async function loadJSON() {
         updateDisplay(); // Update display (either player details or player list)
     } catch (error) {
         console.error('Error loading JSON:', error);
+        document.getElementById("result").innerHTML = "<p>Error loading data. Please try again later.</p>";
     }
 }
 
@@ -59,7 +60,7 @@ function updateDisplay() {
     let resultDiv = document.getElementById("result");
     
     if (!jsonData || !jsonData.users) {
-        resultDiv.innerHTML = "<p>Player not found</p>";
+        resultDiv.innerHTML = "<p>No player data found. Please try again later.</p>";
         return;
     }
 
@@ -68,7 +69,7 @@ function updateDisplay() {
 
     if (!playerName) {
         // No player selected, show all players
-        resultDiv.innerHTML = "<small>[full index of all players]</small><ul>";
+        resultDiv.innerHTML = "<small>[Full index of all players]</small><ul>";
         jsonData.users.forEach(user => {
             resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name}</a></li>`;
         });
@@ -120,7 +121,7 @@ function updateDisplay() {
             resultDiv.innerHTML += `<p>No blades</p>`;
         }
     } else {
-        resultDiv.innerHTML = `<p>Player not found</p>`;
+        resultDiv.innerHTML = `<p>Player not found. Please check the name or try again later.</p>`;
     }
 }
 
@@ -132,8 +133,8 @@ window.onload = function () {
 };
 
 setInterval(loadJSON, 1000);
+</script>
 
-    </script>
 
 </head>
 <body>
