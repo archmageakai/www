@@ -9,13 +9,7 @@
 	
     <title>ギコっぽいの赤いネス</title>
     
-    <script>
-let jsonData = {};
-let itemsData = {};
-let bladesData = {};
-let lastLoadedPlayer = ""; // Cache to track current displayed player
-let lastJsonData = ""; // Cache to prevent unnecessary updates
-
+<script>
 // Function to load JSON data and update player display
 async function loadJSON() {
     try {
@@ -40,6 +34,21 @@ async function loadJSON() {
 // Function to format numbers
 function formatNumber(value) {
     return (typeof value === 'number' && !Number.isInteger(value)) ? value.toFixed(2) : value.toString();
+}
+
+// Function to sort players alphabetically, handling numeric names first
+function sortPlayers(players) {
+    return players.sort((a, b) => {
+        const nameA = a.player_name.toLowerCase();
+        const nameB = b.player_name.toLowerCase();
+        
+        // First, sort by character or numeric name, putting numbers first
+        if (nameA.match(/^\d/) && !nameB.match(/^\d/)) return -1;
+        if (!nameA.match(/^\d/) && nameB.match(/^\d/)) return 1;
+
+        // Then, sort alphabetically
+        return nameA.localeCompare(nameB);
+    });
 }
 
 // Get item name by ID
@@ -69,29 +78,24 @@ function updateDisplay() {
     if (!playerName) {
         // No player selected, show all players
         resultDiv.innerHTML = "<small>[full index of all players]</small><ul>";
-        jsonData.users.forEach(user => {
-            resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name}</a></li>`;
+
+        // Sort the players alphabetically
+        const sortedPlayers = sortPlayers(jsonData.users);
+
+        sortedPlayers.forEach(user => {
+            const encodedName = encodeURIComponent(user.player_name);
+            resultDiv.innerHTML += `<li><a href="users.html#${encodedName}">${user.player_name}</a></li>`;
         });
         resultDiv.innerHTML += "</ul>";
         return;
     }
 
-    if (playerName === lastLoadedPlayer) return; // Skip redundant updates
-
     let player = jsonData.users.find(user => user.player_name === playerName);
 
     if (player) {
-        lastLoadedPlayer = playerName; // Cache player
-
-        let yen = formatNumber(player.currencies.yen);
-        let grossYen = formatNumber(player.currencies.gross_yen);
-        let todayGacha = formatNumber(player.gacha.today);
-        let guaranteeGacha = formatNumber(player.gacha.guarantee);
-        let totalGacha = formatNumber(player.gacha.total);
-
         resultDiv.innerHTML = `<h1>${player.player_name}</h1>`;
         resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
-        resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
+        resultDiv.innerHTML += `<p>Today: ${formatNumber(player.gacha.today)} / Guarantee: ${formatNumber(player.gacha.guarantee)} / Total: ${formatNumber(player.gacha.total)}</p>`;
 
         // Items
         resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
@@ -133,7 +137,7 @@ window.onload = function () {
 
 setInterval(loadJSON, 1000);
 
-    </script>
+</script>
 
 </head>
 <body>
