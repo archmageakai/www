@@ -246,7 +246,7 @@ function updateDisplay() {
     let resultDiv = document.getElementById("result");
     
     if (!jsonData || !jsonData.users) {
-        resultDiv.innerHTML = "<p>Error: Data not loaded correctly.</p>";
+        resultDiv.innerHTML = "<p>Loading . . .</p>";
         return;
     }
 
@@ -255,7 +255,7 @@ function updateDisplay() {
 
     if (!playerName) {
         // No player selected, show all players
-        resultDiv.innerHTML = "<h2>Players List</h2><ul>";
+        resultDiv.innerHTML = "full index of all players<ul>";
         jsonData.users.forEach(user => {
             resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name}</a></li>`;
         });
@@ -286,7 +286,7 @@ function updateDisplay() {
             let itemIndex = 1;
             Object.entries(player.items).forEach(([key, value]) => {
                 let itemName = getItemName(parseFloat(key));
-                resultDiv.innerHTML += `<p>${itemIndex}. [ID ${key}] <a href="testitems.html#${key}">${itemName}</a> x ${value}</p>`;
+                resultDiv.innerHTML += `<p>${itemIndex}. [ID ${key}] <a href="items.html#${key}">${itemName}</a> x ${value}</p>`;
                 itemIndex++;
             });
         } else {
@@ -299,7 +299,7 @@ function updateDisplay() {
             let bladeIndex = 1;
             Object.entries(player.blades).forEach(([key, value]) => {
                 let bladeName = getBladeName(parseFloat(key));
-                resultDiv.innerHTML += `<p>${bladeIndex}. [ID ${key}] <a href="testblades.html#${key}">${bladeName}</a> <br>
+                resultDiv.innerHTML += `<p>${bladeIndex}. [ID ${key}] <a href="blade.html#${key}">${bladeName}</a> <br>
                     Slots (Available: ${value.core_slots.available}, Used: ${value.core_slots.used}, Broken: ${value.core_slots.broken})</p>`;
                 bladeIndex++;
             });
