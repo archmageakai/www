@@ -248,6 +248,7 @@
             return blade ? blade.blade_name : "Unknown Blade"; // Return blade name or "Unknown Blade" if not found
         }
 
+// Function to search for a player and display their details
 async function searchPlayer() {
     await loadJSON(); // Always reload JSON to get the latest data
 
@@ -260,9 +261,14 @@ async function searchPlayer() {
         return;
     }
 
-    // Check if the URL hash exists and use it for the search input
-    let playerNameFromHash = window.location.hash.slice(1); // Remove the '#' from the hash
-    let player = jsonData.users.find(user => user.player_name === playerNameFromHash || user.player_name === input);
+    let playerName = input.trim();
+
+    // If there's a URL hash (e.g., #user), use that instead of the input
+    if (window.location.hash) {
+        playerName = decodeURIComponent(window.location.hash.substring(1)); // Decode hash part
+    }
+
+    let player = jsonData.users.find(user => user.player_name === playerName);
 
     if (player) {
         let yen = formatNumber(player.currencies.yen);
@@ -272,24 +278,17 @@ async function searchPlayer() {
         let totalGacha = formatNumber(player.gacha.total);
 
         resultDiv.innerHTML += `<h1>${player.player_name}</h1>`;
-
-        // Commented out yen, until converted akaiyen.py to JSON
-        // resultDiv.innerHTML += `<h3>Currencies</h3>`;
-        // resultDiv.innerHTML += `<p>Yen: ${yen}</p>`;
-        // resultDiv.innerHTML += `<p>Gross Yen: ${grossYen}</p>`;
-
         resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
         resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
 
         // Displaying Items
         resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
         if (Object.keys(player.items).length > 0) {
-            let itemIndex = 1; // Start item numbering from 1
+            let itemIndex = 1;
             Object.entries(player.items).forEach(([key, value]) => {
-                // Convert item ID to string and match it to the item name
                 let itemName = getItemName(parseFloat(key));
                 resultDiv.innerHTML += `<p>${itemIndex}. [ID ${key}] <a href="testitems.html#${key}">${itemName}</a> x ${value}</p>`;
-                itemIndex++; // Increment the item number
+                itemIndex++;
             });
         } else {
             resultDiv.innerHTML += `<p>No items</p>`;
@@ -298,18 +297,18 @@ async function searchPlayer() {
         // Displaying Blades
         resultDiv.innerHTML += `<u><strong>Blades</strong></u>`;
         if (Object.keys(player.blades).length > 0) {
-            let bladeIndex = 1; // Start blade numbering from 1
+            let bladeIndex = 1;
             Object.entries(player.blades).forEach(([key, value]) => {
                 let bladeName = getBladeName(parseFloat(key));
                 resultDiv.innerHTML += `<p>${bladeIndex}. [ID ${key}] <a href="testblades.html#${key}">${bladeName}</a> <br>
                     Slots (Available: ${value.core_slots.available}, Used: ${value.core_slots.used}, Broken: ${value.core_slots.broken})</p>`;
-                bladeIndex++; // Increment the blade number
+                bladeIndex++;
             });
         } else {
             resultDiv.innerHTML += `<p>No blades</p>`;
         }
 
-        window.location.hash = `#${player.player_name}`; // Update URL with the player's name hash
+        window.location.hash = `#${player.player_name}`;
     } else {
         resultDiv.innerHTML = `<p>Player not found</p>`;
     }
