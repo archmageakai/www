@@ -200,13 +200,17 @@
 let jsonData = {};
 let itemsData = {};
 let bladesData = {};
-let lastLoadedPlayer = ""; // Cache last loaded player
+let lastLoadedPlayer = ""; // Cache to track current displayed player
+let lastJsonData = ""; // Cache to prevent unnecessary updates
 
-// Function to load JSON data
+// Function to load JSON data and update player display
 async function loadJSON() {
     try {
         const userResponse = await fetch('users.json', { cache: 'no-store' });
-        jsonData = await userResponse.json();
+        const newJsonData = await userResponse.text(); // Read as text first to compare
+        if (newJsonData === lastJsonData) return; // Skip reload if data is unchanged
+        lastJsonData = newJsonData; // Update cache
+        jsonData = JSON.parse(newJsonData); // Parse new data
 
         const itemsResponse = await fetch('items.json', { cache: 'no-store' });
         itemsData = await itemsResponse.json();
@@ -214,7 +218,7 @@ async function loadJSON() {
         const bladesResponse = await fetch('blade.json', { cache: 'no-store' });
         bladesData = await bladesResponse.json();
 
-        updatePlayerData(); // Update display if player hash exists
+        updatePlayerData(); // Update display only when data changes
     } catch (error) {
         console.error('Error loading JSON:', error);
     }
@@ -240,8 +244,7 @@ function getBladeName(bladeID) {
 // Function to update player data
 function updatePlayerData() {
     let resultDiv = document.getElementById("result");
-    resultDiv.innerHTML = "";
-
+    
     if (!jsonData || !jsonData.users) {
         resultDiv.innerHTML = "<p>Error: Data not loaded correctly.</p>";
         return;
@@ -249,7 +252,7 @@ function updatePlayerData() {
 
     // Get player name from URL hash (e.g., #Moon)
     let playerName = decodeURIComponent(window.location.hash.slice(1)).trim();
-    if (!playerName || playerName === lastLoadedPlayer) return; // Skip if same player
+    if (!playerName || playerName === lastLoadedPlayer) return; // Skip redundant updates
 
     let player = jsonData.users.find(user => user.player_name === playerName);
 
@@ -262,7 +265,7 @@ function updatePlayerData() {
         let guaranteeGacha = formatNumber(player.gacha.guarantee);
         let totalGacha = formatNumber(player.gacha.total);
 
-        resultDiv.innerHTML += `<h1>${player.player_name}</h1>`;
+        resultDiv.innerHTML = `<h1>${player.player_name}</h1>`;
         resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
         resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
 
@@ -306,8 +309,9 @@ window.onload = function () {
     updatePlayerData(); // Load player if hash exists
 };
 
-// Refresh JSON every second without clearing display
+// Refresh JSON every second without unnecessary clearing
 setInterval(loadJSON, 1000);
+
     </script>
 
 </head>
