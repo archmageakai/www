@@ -201,27 +201,26 @@
         let itemsData = {};
         let bladesData = {}; // To store blade data
 
-async function loadJSON() {
-    const searchInput = document.getElementById("search");
-    const currentSearch = searchInput.value; // Save the user's input
+        // Function to load the users JSON data and blades data
+        async function loadJSON() {
+            try {
+                const userResponse = await fetch('users.json', { cache: 'no-store' }); // Force no-cache to always load fresh data
+                jsonData = await userResponse.json();
 
-    try {
-        const userResponse = await fetch('users.json', { cache: 'no-store' });
-        jsonData = await userResponse.json();
+                const itemsResponse = await fetch('items.json', { cache: 'no-store' });
+                itemsData = await itemsResponse.json();
 
-        const itemsResponse = await fetch('items.json', { cache: 'no-store' });
-        itemsData = await itemsResponse.json();
+                const bladesResponse = await fetch('blade.json', { cache: 'no-store' }); // Corrected file name to blade.json
+                bladesData = await bladesResponse.json();
 
-        const bladesResponse = await fetch('blade.json', { cache: 'no-store' });
-        bladesData = await bladesResponse.json();
-
-        // Restore the search input after loading data
-        searchInput.value = currentSearch;
-
-    } catch (error) {
-        console.error('Error loading JSON:', error);
-    }
-}
+                // After loading the data, update the player display if there's any active search
+                if (document.getElementById("search").value) {
+                    searchPlayer();  // Re-run search with the updated data
+                }
+            } catch (error) {
+                console.error('Error loading JSON:', error);
+            }
+        }
 
         // Set an interval to load new data every 1 second (1000 ms)
         setInterval(loadJSON, 1000);  // Updates every 1 second
@@ -249,7 +248,6 @@ async function loadJSON() {
             return blade ? blade.blade_name : "Unknown Blade"; // Return blade name or "Unknown Blade" if not found
         }
 
-// Function to search for a player and display their details
 async function searchPlayer() {
     await loadJSON(); // Always reload JSON to get the latest data
 
@@ -264,15 +262,11 @@ async function searchPlayer() {
 
     let playerName = input.trim();
 
-    // If there's a URL hash (e.g., #user), use that instead of the input
-    if (window.location.hash) {
-        playerName = decodeURIComponent(window.location.hash.substring(1)); // Decode hash part
-        document.getElementById("search").value = playerName; // Update the search bar with the decoded name
-    }
-
     let player = jsonData.users.find(user => user.player_name === playerName);
 
     if (player) {
+        sessionStorage.setItem("lastSearch", playerName); // Store the last searched name
+
         let yen = formatNumber(player.currencies.yen);
         let grossYen = formatNumber(player.currencies.gross_yen);
         let todayGacha = formatNumber(player.gacha.today);
@@ -310,12 +304,11 @@ async function searchPlayer() {
             resultDiv.innerHTML += `<p>No blades</p>`;
         }
 
-        window.location.hash = `#${player.player_name}`; // Update the URL hash with the decoded player name
+        window.location.hash = `#${player.player_name}`;
     } else {
         resultDiv.innerHTML = `<p>Player not found</p>`;
     }
 }
-
 
         // Load users.json and store player names
         let playerNames = [];
@@ -371,33 +364,16 @@ function suggestPlayers() {
 
 
 window.onload = function () {
-    const searchInput = document.getElementById("search");
-    const playerNameFromHash = window.location.hash.slice(1);
-
-    if (playerNameFromHash) {
-        searchInput.value = playerNameFromHash;
-        searchPlayer();
-    }
-
     loadPlayerNames().then(() => {
-        const lastSearch = sessionStorage.getItem('lastSearch');
+        const lastSearch = sessionStorage.getItem("lastSearch");
         if (lastSearch) {
-            searchInput.value = lastSearch;
-            searchPlayer();
-        }
-    });
-
-    // Attach event listener to trigger search on Enter key press
-    searchInput.addEventListener("keypress", function(event) {
-        if (event.key === "Enter") {
-            searchPlayer();
+            searchPlayer(); // Search, but don't overwrite input field
         }
     });
 
     // Attach input event listener for live suggestions
-    searchInput.addEventListener("input", suggestPlayers);
+    document.getElementById("search").addEventListener("input", suggestPlayers);
 };
-
     </script>
 
 </head>
