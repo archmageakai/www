@@ -368,27 +368,27 @@ function suggestPlayers() {
 
 
         // Load player names when the page loads
-        window.onload = function () {
-            loadPlayerNames().then(() => {
-                // Restore last search if available
-                const lastSearch = sessionStorage.getItem('lastSearch');
-                if (lastSearch) {
-                    document.getElementById("search").value = lastSearch;
-                    searchPlayer(); // Auto-search
-                }
-            });
+window.onload = function () {
+    loadPlayerNames().then(() => {
+        // Check if there's a hash in the URL
+        if (window.location.hash) {
+            let playerName = decodeURIComponent(window.location.hash.substring(1)); // Remove '#' and decode
+            document.getElementById("search").value = playerName;
+            searchPlayer();
+        }
 
-            // Attach input event listener for live suggestions
-            document.getElementById("search").addEventListener("input", suggestPlayers);
-        };
+        // Restore last search if available
+        const lastSearch = sessionStorage.getItem('lastSearch');
+        if (lastSearch) {
+            document.getElementById("search").value = lastSearch;
+            searchPlayer();
+        }
+    });
 
-        // Preserve the last search query before reloading
-        window.addEventListener('beforeunload', function() {
-            const searchValue = document.getElementById("search").value.trim();
-            if (searchValue) {
-                sessionStorage.setItem('lastSearch', searchValue);
-            }
-        });
+    // Attach input event listener for live suggestions
+    document.getElementById("search").addEventListener("input", suggestPlayers);
+};
+
     </script>
 
 </head>
