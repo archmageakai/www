@@ -136,15 +136,15 @@ button.active {
 
 
 <script>
-let items = [];  // To store items data globally
-let sortOrderRarity = true; // true = descending (highest first), false = ascending (lowest first)
-let sortOrderAlphabetical = true; // true = A-Z, false = Z-A
-let sortOrderID = true; // true = lowest to highest, false = highest to lowest
+let items = [];
+let sortOrderRarity = true;
+let sortOrderAlphabetical = true;
+let sortOrderID = true;
 
 async function loadItems() {
     try {
-        const timestamp = new Date().getTime();  // Get the current timestamp
-        const response = await fetch(`items.json?timestamp=${timestamp}`);  // Append timestamp to avoid caching
+        const timestamp = new Date().getTime();
+        const response = await fetch(`items.json?timestamp=${timestamp}`);
         if (!response.ok) {
             throw new Error("Failed to load items.json");
         }
@@ -236,76 +236,69 @@ function displaySingleItem(itemId) {
         // Highlight the item
         row.classList.add("highlight");
 
-        // Change <h1> content to the item's name
         document.getElementById("pageTitle").textContent = `Item ID: ${item.item_ID}`;
     } else {
-        displayItemNotFound();  // If no item is found, show "Item not found"
+        displayItemNotFound();
     }
 }
 
 function displayItemNotFound() {
     const tableBody = document.getElementById("itemTableBody");
 
-    // Clear previous rows to ensure we only show this message once
     tableBody.innerHTML = "";
 
-    // Create a new row for the "Item not found" message
     const row = document.createElement("tr");
 
-    // Create a cell for the image (leave it empty for now)
     const imgCell = document.createElement("td");
     imgCell.classList.add("image-cell");
 
-    // Create a cell for the "Item not found" message
     const itemCell = document.createElement("td");
-    itemCell.colSpan = "2";  // Span across both columns
-    itemCell.style.textAlign = "center";  // Center-align the text
-    itemCell.textContent = "Item not found";  // Set the message
+    itemCell.colSpan = "2";
+    itemCell.style.textAlign = "center"; 
+    itemCell.textContent = "Item not found";
 
-    // Append the cells to the row
     row.appendChild(imgCell);
     row.appendChild(itemCell);
 
-    // Append the row to the table body
     tableBody.appendChild(row);
 	
 	document.getElementById("pageTitle").textContent = `Error`;
 }
 
 function checkURLHash() {
-    const hash = window.location.hash.substring(1); // Get hash without '#'
+    const hash = window.location.hash.substring(1); 
 
     if (hash) {
-        // Convert the hash value to a number (ensure proper comparison)
-        const itemId = parseFloat(hash); // Convert hash to a number (e.g., #1.1 -> 1.1)
+
+        const itemId = parseFloat(hash); // Convert hash to a number (#1.1 -> 1.1)
 
         // Find the item based on the itemId (number)
         const item = items.find(item => item.item_ID === itemId);
 
         if (item) {
-            // If item found, display it
+		
             displaySingleItem(item.item_ID);
-            document.querySelectorAll('button').forEach(button => button.style.display = 'none');  // Hide buttons
-            document.getElementById("showAllLink").style.display = "block";  // Show "Show All" link
+            document.querySelectorAll('button').forEach(button => button.style.display = 'none');
+            document.getElementById("showAllLink").style.display = "block";
         } else {
-            // If item not found, show the "Item not found" message
+
             displayItemNotFound();
-			document.querySelectorAll('button').forEach(button => button.style.display = 'none');  // Hide buttons
-            document.getElementById("showAllLink").style.display = "block";  // Show "Show All" link
+			document.querySelectorAll('button').forEach(button => button.style.display = 'none');
+            document.getElementById("showAllLink").style.display = "block"; 
         }
     } else {
-        // If no hash is present, display all items
-        displayItems(items); // Show all items if there's no hash
-        document.querySelectorAll('button').forEach(button => button.style.display = 'inline-block');  // Show buttons
-        document.getElementById("showAllLink").style.display = "none";  // Hide "Show All" link
+
+        displayItems(items); 
+        document.querySelectorAll('button').forEach(button => button.style.display = 'inline-block');
+        document.getElementById("showAllLink").style.display = "none";
     }
 }
 
 function showAllItems() {
     window.location.hash = ''; // Remove hash from URL
     displayItems(items); // Reload the full item list
-    document.getElementById("showAllLink").style.display = "none"; // Hide the "Show All" link
-    // Change <h1> back to "Item List"
+    document.getElementById("showAllLink").style.display = "none";
+
     document.getElementById("pageTitle").textContent = "Item List";
 }
 
@@ -314,7 +307,7 @@ function hideButtonsIfNeeded() {
     const hash = window.location.hash;
     if (hash === "#1") {
         const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => button.style.display = 'none');  // Hide all buttons
+        buttons.forEach(button => button.style.display = 'none'); 
     }
 }
 
@@ -326,7 +319,7 @@ function sortItemsByRarity() {
     if (rarityFirstClick) {
         items.sort((a, b) => {
             const rarityOrder = { "5-star": 5, "4-star": 4, "3-star": 3, "2-star": 2, "1-star": 1 };
-            return rarityOrder[b.Rarity] - rarityOrder[a.Rarity]; // Highest first
+            return rarityOrder[b.Rarity] - rarityOrder[a.Rarity];
         });
         rarityFirstClick = false;
     } else {
@@ -355,11 +348,11 @@ function sortItemsAlphabetically() {
 window.onload = function() {
     loadItems();
     checkURLHash();
-    hideButtonsIfNeeded(); // Ensure buttons are hidden if needed when the page loads
+    hideButtonsIfNeeded();
 };
 
 window.onhashchange = function () {
-    location.reload(); // Force full page reload on hash change
+    location.reload();
 };
 </script>
 

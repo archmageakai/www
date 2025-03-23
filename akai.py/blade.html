@@ -136,24 +136,23 @@ button.active {
 
 
 <script>
-let blades = [];  // To store blades data globally
-let sortOrderRarity = true; // true = descending (highest first), false = ascending (lowest first)
-let sortOrderAlphabetical = true; // true = A-Z, false = Z-A
-let sortOrderID = true; // true = lowest to highest, false = highest to lowest
+let blades = [];
+let sortOrderRarity = true;
+let sortOrderAlphabetical = true;
+let sortOrderID = true;
 
 async function loadBlades() {
     try {
-        const timestamp = new Date().getTime();  // Get the current timestamp
-        const response = await fetch(`blade.json?timestamp=${timestamp}`);  // Append timestamp to avoid caching
+        const timestamp = new Date().getTime();
+        const response = await fetch(`blade.json?timestamp=${timestamp}`);
         if (!response.ok) {
             throw new Error("Failed to load blade.json");
         }
         const jsonData = await response.json();
         blades = jsonData.blades;
 
-        // Call checkURLHash after blades have been successfully loaded
         checkURLHash();
-        hideButtonsIfNeeded(); // Ensure buttons are hidden if needed when the page loads
+        hideButtonsIfNeeded();
     } catch (error) {
         console.error("Error loading blades:", error);
         document.getElementById("itemTableBody").innerHTML = "<tr><td colspan='2'>Failed to load blades.</td></tr>";
@@ -177,25 +176,22 @@ function formatRarityClass(rarity) {
 
 function displayBlades(blades) {
     const tableBody = document.getElementById("itemTableBody");
-    tableBody.innerHTML = ""; // Clear existing rows before displaying blades
+    tableBody.innerHTML = "";
 
     blades.forEach(blade => {
         const row = document.createElement("tr");
-        row.id = blade.blade_ID;  // Use blade_ID as the row ID
+        row.id = blade.blade_ID;
 
-        // Image Cell (Square)
         const imgCell = document.createElement("td");
         imgCell.classList.add("image-cell");
         const img = document.createElement("img");
-        img.src = `/images/akai.py/${blade.blade_ID}.png`;  // Ensure image path is correct
+        img.src = `/images/akai.py/${blade.blade_ID}.png`;
         img.alt = "img";
         imgCell.appendChild(img);
 
-        // Name + Type + Description Cell
         const bladeCell = document.createElement("td");
         let rarityText = getStarRepresentation(blade.Rarity);
 
-        // Create the blade name and type
         bladeCell.innerHTML = `
             <strong class="${formatRarityClass(blade.Rarity)}">${blade.blade_name} (${rarityText})</strong><br>
             ${blade.Type} [${blade.Element}]<br>
@@ -203,38 +199,34 @@ function displayBlades(blades) {
 			[${blade.Stats}]
         `;
 
-        // Create the "more here" link
         const moreLink = document.createElement("a");
-        moreLink.href = `#${blade.blade_ID}`;  // Set href to the blade's ID (e.g., #1, #2)
+        moreLink.href = `#${blade.blade_ID}`;
         moreLink.innerText = "[more here]";
 
-        // Append the "more here" link to the bladeCell
         bladeCell.appendChild(moreLink);
 
         row.appendChild(imgCell);
         row.appendChild(bladeCell);
-        tableBody.appendChild(row); // Add the row to the table body
+        tableBody.appendChild(row);
     });
 }
 
 function displaySingleBlade(bladeId) {
     const tableBody = document.getElementById("itemTableBody");
-    tableBody.innerHTML = ""; // Clear previous rows before displaying the single blade
+    tableBody.innerHTML = "";
 
     const blade = blades.find(blade => blade.blade_ID === bladeId);
     if (blade) {
         const row = document.createElement("tr");
-        row.id = blade.blade_ID;  // Use blade_ID as the row ID
+        row.id = blade.blade_ID; 
 
-        // Image Cell (Square)
         const imgCell = document.createElement("td");
         imgCell.classList.add("image-cell");
         const img = document.createElement("img");
-        img.src = `/images/akai.py/${blade.blade_ID}.png`;  // Ensure image path is correct
+        img.src = `/images/akai.py/${blade.blade_ID}.png`;
         img.alt = blade.blade_name;
         imgCell.appendChild(img);
 
-        // Name + Description Cell
         const bladeCell = document.createElement("td");
         let rarityText = getStarRepresentation(blade.Rarity);
         bladeCell.innerHTML = `<strong class="${formatRarityClass(blade.Rarity)}">${blade.blade_name} (${rarityText})</strong><br>
@@ -246,92 +238,80 @@ function displaySingleBlade(bladeId) {
         row.appendChild(bladeCell);
         tableBody.appendChild(row);
 
-        // Highlight the blade
         row.classList.add("highlight");
 
-        // Change <h1> content to the blade's name
         document.getElementById("pageTitle").textContent = `Blade ID: ${blade.blade_ID}`;
     } else {
-        displayBladeNotFound();  // If no blade is found, show "Blade not found"
+        displayBladeNotFound();
     }
 }
 
 function displayBladeNotFound() {
     const tableBody = document.getElementById("itemTableBody");
 
-    // Clear previous rows to ensure we only show this message once
     tableBody.innerHTML = "";
 
-    // Create a new row for the "Blade not found" message
     const row = document.createElement("tr");
 
-    // Create a cell for the image (leave it empty for now)
     const imgCell = document.createElement("td");
     imgCell.classList.add("image-cell");
 
-    // Create a cell for the "Blade not found" message
     const bladeCell = document.createElement("td");
-    bladeCell.colSpan = "2";  // Span across both columns
-    bladeCell.style.textAlign = "center";  // Center-align the text
-    bladeCell.textContent = "Blade not found";  // Set the message
+    bladeCell.colSpan = "2";
+    bladeCell.style.textAlign = "center";
+    bladeCell.textContent = "Blade not found";
 
-    // Append the cells to the row
     row.appendChild(imgCell);
     row.appendChild(bladeCell);
 
-    // Append the row to the table body
     tableBody.appendChild(row);
     
     document.getElementById("pageTitle").textContent = `Error`;
 }
 
 function checkURLHash() {
-    const hash = window.location.hash.substring(1); // Get hash without '#'
+    const hash = window.location.hash.substring(1);
 
     if (hash) {
-        // Convert the hash value to a number (ensure proper comparison)
-        const bladeId = parseFloat(hash); // Convert hash to a number (e.g., #1 -> 1)
 
-        // Find the blade based on the bladeId (number)
+        const bladeId = parseFloat(hash);
         const blade = blades.find(blade => blade.blade_ID === bladeId);
 
         if (blade) {
-            // If blade found, display it
+            
             displaySingleBlade(blade.blade_ID);
-            document.querySelectorAll('button').forEach(button => button.style.display = 'none');  // Hide buttons
-            document.getElementById("showAllLink").style.display = "block";  // Show "Show All" link
+            document.querySelectorAll('button').forEach(button => button.style.display = 'none');
+            document.getElementById("showAllLink").style.display = "block"; 
         } else {
-            // If blade not found, show the "Blade not found" message
+            
             displayBladeNotFound();
-            document.querySelectorAll('button').forEach(button => button.style.display = 'none');  // Hide buttons
-            document.getElementById("showAllLink").style.display = "block";  // Show "Show All" link
+            document.querySelectorAll('button').forEach(button => button.style.display = 'none');
+            document.getElementById("showAllLink").style.display = "block";
         }
     } else {
-        // If no hash is present, display all blades
-        displayBlades(blades); // Show all blades if there's no hash
-        document.querySelectorAll('button').forEach(button => button.style.display = 'inline-block');  // Show buttons
-        document.getElementById("showAllLink").style.display = "none";  // Hide "Show All" link
+        
+        displayBlades(blades);
+        document.querySelectorAll('button').forEach(button => button.style.display = 'inline-block');
+        document.getElementById("showAllLink").style.display = "none";
     }
 }
 
 function showAllBlades() {
-    window.location.hash = ''; // Remove hash from URL
-    displayBlades(blades); // Reload the full blade list
-    document.getElementById("showAllLink").style.display = "none"; // Hide the "Show All" link
-    // Change <h1> back to "Blade List"
+    window.location.hash = '';
+    displayBlades(blades);
+    document.getElementById("showAllLink").style.display = "none";
+    
     document.getElementById("pageTitle").textContent = "Blade List";
 }
 
-// Function to hide the buttons if the hash is #1
 function hideButtonsIfNeeded() {
     const hash = window.location.hash;
     if (hash === "#1") {
         const buttons = document.querySelectorAll('button');
-        buttons.forEach(button => button.style.display = 'none');  // Hide all buttons
+        buttons.forEach(button => button.style.display = 'none');
     }
 }
 
-// Sorting Functions
 let alphabeticalFirstClick = true; 
 let idFirstClick = false;
 let rarityFirstClick = true;
@@ -340,7 +320,7 @@ function sortBladesByRarity() {
     if (rarityFirstClick) {
         blades.sort((a, b) => {
             const rarityOrder = { "5-star": 5, "4-star": 4, "3-star": 3, "2-star": 2, "1-star": 1 };
-            return rarityOrder[b.Rarity] - rarityOrder[a.Rarity]; // Highest first
+            return rarityOrder[b.Rarity] - rarityOrder[a.Rarity];
         });
         rarityFirstClick = false;
     } else {
@@ -369,11 +349,11 @@ function sortBladesAlphabetically() {
 window.onload = function() {
     loadBlades();
     checkURLHash();
-    hideButtonsIfNeeded(); // Ensure buttons are hidden if needed when the page loads
+    hideButtonsIfNeeded();
 };
 
 window.onhashchange = function () {
-    location.reload(); // Force full page reload on hash change
+    location.reload();
 };
 </script>
 </body>

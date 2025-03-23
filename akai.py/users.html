@@ -8,193 +8,6 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	
     <title>ギコっぽいの赤いネス</title>
-    <style>
-        /* FOR TESTING PURPOSES */
-        /* AKAI CSS */
-        body {
-            color: #ff0000;
-            background-color: #000000;
-            font-family: "Lucida Console", "Courier New", monospace;
-            line-height: 1.5;
-            margin: 0;
-            padding: 1rem;
-            max-width: 700px;
-        }
-
-        p, center, main {
-            font-size: 13px;
-        }
-
-        .content {  
-            margin-bottom: 2rem;  
-        }  
-
-        .navbar {
-            display: flex;  
-            align-items: center;  
-        } 
-
-        header {
-            border-top: 1px solid #ff0000;
-            border-bottom: 1px solid #ff0000;
-        }
-
-        footer {
-            border-top: 1px solid #ff0000;
-            margin-top: 1rem;
-        }
-
-        a {
-            color: #800000;
-            text-decoration: none;
-        }
-
-        hr {
-            border: none;
-            text-align: center;
-            max-width: 700px;
-            margin: 1rem auto;
-        }
-
-        hr::before {
-            content: " ♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡ ♡ ";
-            color: #ff0000;
-            letter-spacing: 3px;
-            display: block;
-            text-align: center;
-        }
-        /* END AKAI CSS SHEET */
-
-        /* gachapon css start */
-        table, th, td {
-            border: 1px solid #ff0000 !important;
-        }
-
-        thead {
-            background-color: #333333; /* Dark gray background */
-            color: #ff0000;  /* Red text color for the header */
-        }
-
-        th {
-            padding: 10px;
-            text-align: left;
-            vertical-align: middle;
-            color: #ff0000;  /* Ensure text color is red */
-        }
-
-        /* Rest of your existing CSS */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-        }
-
-        th, td {
-            border: 1px solid #ff0000;
-            padding: 10px;
-            text-align: left;
-            vertical-align: middle;
-            color: #ff0000;  /* Red text color */
-        }
-
-        /* Square image cell */
-        .image-cell {
-            width: 60px;  /* Set square size */
-            height: 60px; 
-            text-align: center;
-        }
-
-        /* Square images */
-        .image-cell img {
-            width: 100%;
-            height: 100%;
-            object-fit: contain; /* Ensures image fits without distortion */
-            display: block;
-        }
-
-        /* Rarity colors */
-        .rarity5star { color: purple; font-weight: bold; }
-        .rarity4star { color: gold; font-weight: bold; }
-        .rarity3star { color: silver; }
-        .rarity2star { color: red; }
-        .rarity1star { color: red; }
-
-        /* Highlight class */
-        .highlight { background-color: maroon; }
-
-        /* Link styles */
-        .show-all-link {
-            color: maroon;
-            text-decoration: none;
-            display: block;
-            margin-top: 20px;
-        }
-
-        /* search */
-        input[type="text"] {
-            font-size: 16px;
-            font-family: "Lucida Console", "Courier New", monospace;
-            background-color: #000000;
-            color: #ff0000;
-            border: 1px solid #ff0000;
-            padding: 10px 20px;
-            width: 100%; /* Adjust width to fill the container */
-            max-width: 300px; /* Keep search bar size fixed */
-            height: 42px; /* Match the button height */
-            box-sizing: border-box; /* Ensures padding doesn't affect size */
-        }
-
-        /* Suggestions box */
-        .suggestions-box {
-            background-color: #333333;
-            border: 1px solid #ff0000;
-            color: #ff0000;
-            max-height: 200px;
-            overflow-y: auto;
-            position: absolute;
-            width: 100%;
-            max-width: 300px; /* Match search bar width */
-            margin-top: 5px;
-            z-index: 10;
-            display: none; /* Hide suggestions initially */
-        }
-
-        /* Individual suggestion style */
-        .suggestion {
-            padding: 10px;
-            cursor: pointer;
-        }
-
-        .suggestion:hover {
-            background-color: #ff0000;
-            color: #ffffff;
-        }
-
-        /* Button styling */
-        button {
-            font-size: 16px;
-            color: #ff0000; /* Red text color */
-            font-family: "Lucida Console", "Courier New", monospace;
-            background-color: #333333; /* Dark gray background */
-            border: 1px solid #ff0000; /* Red border */
-            padding: 10px 20px;
-            cursor: pointer;
-            transition: background-color 0.3s, color 0.3s;
-        }
-
-        button:hover {
-            background-color: #ff0000; /* Red background on hover */
-            color: #ffffff; /* White text on hover */
-        }
-
-        /* Active button state (when the sorting button is clicked) */
-        button.active {
-            background-color: #ff0000; /* Red background for active button */
-            color: #ffffff; /* White text for active button */
-            border: 1px solid #ff0000; /* Red border */
-        }
-        /* gachapon css end */
-    </style>
     
     <script>
 let jsonData = {};
@@ -246,7 +59,7 @@ function updateDisplay() {
     let resultDiv = document.getElementById("result");
     
     if (!jsonData || !jsonData.users) {
-        resultDiv.innerHTML = "<p>Loading . . .</p>";
+        resultDiv.innerHTML = "<p>Player not found</p>";
         return;
     }
 
@@ -255,7 +68,7 @@ function updateDisplay() {
 
     if (!playerName) {
         // No player selected, show all players
-        resultDiv.innerHTML = "full index of all players<ul>";
+        resultDiv.innerHTML = "<small>[full index of all players]</small><ul>";
         jsonData.users.forEach(user => {
             resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name}</a></li>`;
         });
@@ -268,7 +81,7 @@ function updateDisplay() {
     let player = jsonData.users.find(user => user.player_name === playerName);
 
     if (player) {
-        lastLoadedPlayer = playerName; // Cache the loaded player name
+        lastLoadedPlayer = playerName; // Cache player
 
         let yen = formatNumber(player.currencies.yen);
         let grossYen = formatNumber(player.currencies.gross_yen);
@@ -280,7 +93,7 @@ function updateDisplay() {
         resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
         resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
 
-        // Display Items
+        // Items
         resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
         if (Object.keys(player.items).length > 0) {
             let itemIndex = 1;
@@ -293,7 +106,7 @@ function updateDisplay() {
             resultDiv.innerHTML += `<p>No items</p>`;
         }
 
-        // Display Blades
+        // Blades
         resultDiv.innerHTML += `<u><strong>Blades</strong></u>`;
         if (Object.keys(player.blades).length > 0) {
             let bladeIndex = 1;
@@ -311,23 +124,20 @@ function updateDisplay() {
     }
 }
 
-// Detect hash change (user switches to another player)
 window.onhashchange = updateDisplay;
 
-// Initial Load
 window.onload = function () {
     loadJSON(); // Load initial data
     updateDisplay(); // Load player if hash exists or show list
 };
 
-// Refresh JSON every second without unnecessary clearing
 setInterval(loadJSON, 1000);
 
     </script>
 
 </head>
 <body>
-    <strong>Player index</strong><br>
+    <strong><u>Player index</u></strong><br>
     <div id="result"></div>
 </body>
 </html>
