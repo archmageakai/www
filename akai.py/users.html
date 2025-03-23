@@ -248,71 +248,72 @@
             return blade ? blade.blade_name : "Unknown Blade"; // Return blade name or "Unknown Blade" if not found
         }
 
-        // Function to search for a player and display their details
-        async function searchPlayer() {
-            await loadJSON(); // Always reload JSON to get the latest data
+async function searchPlayer() {
+    await loadJSON(); // Always reload JSON to get the latest data
 
-            let input = document.getElementById("search").value;
-            let resultDiv = document.getElementById("result");
-            resultDiv.innerHTML = "";
+    let input = document.getElementById("search").value;
+    let resultDiv = document.getElementById("result");
+    resultDiv.innerHTML = "";
 
-            if (!jsonData || !jsonData.users) {
-                resultDiv.innerHTML = "<p>Error: Data not loaded correctly.</p>";
-                return;
-            }
+    if (!jsonData || !jsonData.users) {
+        resultDiv.innerHTML = "<p>Error: Data not loaded correctly.</p>";
+        return;
+    }
 
-            let player = jsonData.users.find(user => user.player_name === input);
+    // Check if the URL hash exists and use it for the search input
+    let playerNameFromHash = window.location.hash.slice(1); // Remove the '#' from the hash
+    let player = jsonData.users.find(user => user.player_name === playerNameFromHash || user.player_name === input);
 
-            if (player) {
-                let yen = formatNumber(player.currencies.yen);
-                let grossYen = formatNumber(player.currencies.gross_yen);
-                let todayGacha = formatNumber(player.gacha.today);
-                let guaranteeGacha = formatNumber(player.gacha.guarantee);
-                let totalGacha = formatNumber(player.gacha.total);
+    if (player) {
+        let yen = formatNumber(player.currencies.yen);
+        let grossYen = formatNumber(player.currencies.gross_yen);
+        let todayGacha = formatNumber(player.gacha.today);
+        let guaranteeGacha = formatNumber(player.gacha.guarantee);
+        let totalGacha = formatNumber(player.gacha.total);
 
-                resultDiv.innerHTML += `<h1>${player.player_name}</h1>`;
+        resultDiv.innerHTML += `<h1>${player.player_name}</h1>`;
 
-                // Commented out yen, until converted akaiyen.py to JSON
-                // resultDiv.innerHTML += `<h3>Currencies</h3>`;
-                // resultDiv.innerHTML += `<p>Yen: ${yen}</p>`;
-                // resultDiv.innerHTML += `<p>Gross Yen: ${grossYen}</p>`;
+        // Commented out yen, until converted akaiyen.py to JSON
+        // resultDiv.innerHTML += `<h3>Currencies</h3>`;
+        // resultDiv.innerHTML += `<p>Yen: ${yen}</p>`;
+        // resultDiv.innerHTML += `<p>Gross Yen: ${grossYen}</p>`;
 
-                resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
-                resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
+        resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
+        resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
 
-                // Displaying Items
-                resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
-                if (Object.keys(player.items).length > 0) {
-                    let itemIndex = 1; // Start item numbering from 1
-                    Object.entries(player.items).forEach(([key, value]) => {
-                        // Convert item ID to string and match it to the item name
-                        let itemName = getItemName(parseFloat(key));
-                        resultDiv.innerHTML += `<p>${itemIndex}. [ID ${key}] <a href="testitems.html#${key}">${itemName}</a> x ${value}</p>`;
-                        itemIndex++; // Increment the item number
-                    });
-                } else {
-                    resultDiv.innerHTML += `<p>No items</p>`;
-                }
-
-                // Displaying Blades
-                resultDiv.innerHTML += `<u><strong>Blades</strong></u>`;
-                if (Object.keys(player.blades).length > 0) {
-                    let bladeIndex = 1; // Start blade numbering from 1
-                    Object.entries(player.blades).forEach(([key, value]) => {
-                        let bladeName = getBladeName(parseFloat(key));
-                        resultDiv.innerHTML += `<p>${bladeIndex}. [ID ${key}] <a href="testblades.html#${key}">${bladeName}</a> <br>
-                            Slots (Available: ${value.core_slots.available}, Used: ${value.core_slots.used}, Broken: ${value.core_slots.broken})</p>`;
-                        bladeIndex++; // Increment the blade number
-                    });
-                } else {
-                    resultDiv.innerHTML += `<p>No blades</p>`;
-                }
-
-                window.location.hash = `#${player.player_name}`;
-            } else {
-                resultDiv.innerHTML = `<p>Player not found</p>`;
-            }
+        // Displaying Items
+        resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
+        if (Object.keys(player.items).length > 0) {
+            let itemIndex = 1; // Start item numbering from 1
+            Object.entries(player.items).forEach(([key, value]) => {
+                // Convert item ID to string and match it to the item name
+                let itemName = getItemName(parseFloat(key));
+                resultDiv.innerHTML += `<p>${itemIndex}. [ID ${key}] <a href="testitems.html#${key}">${itemName}</a> x ${value}</p>`;
+                itemIndex++; // Increment the item number
+            });
+        } else {
+            resultDiv.innerHTML += `<p>No items</p>`;
         }
+
+        // Displaying Blades
+        resultDiv.innerHTML += `<u><strong>Blades</strong></u>`;
+        if (Object.keys(player.blades).length > 0) {
+            let bladeIndex = 1; // Start blade numbering from 1
+            Object.entries(player.blades).forEach(([key, value]) => {
+                let bladeName = getBladeName(parseFloat(key));
+                resultDiv.innerHTML += `<p>${bladeIndex}. [ID ${key}] <a href="testblades.html#${key}">${bladeName}</a> <br>
+                    Slots (Available: ${value.core_slots.available}, Used: ${value.core_slots.used}, Broken: ${value.core_slots.broken})</p>`;
+                bladeIndex++; // Increment the blade number
+            });
+        } else {
+            resultDiv.innerHTML += `<p>No blades</p>`;
+        }
+
+        window.location.hash = `#${player.player_name}`; // Update URL with the player's name hash
+    } else {
+        resultDiv.innerHTML = `<p>Player not found</p>`;
+    }
+}
 
         // Load users.json and store player names
         let playerNames = [];
@@ -367,28 +368,26 @@ function suggestPlayers() {
 }
 
 
-        // Load player names when the page loads
-        window.onload = function () {
-            loadPlayerNames().then(() => {
-                // Restore last search if available
-                const lastSearch = sessionStorage.getItem('lastSearch');
-                if (lastSearch) {
-                    document.getElementById("search").value = lastSearch;
-                    searchPlayer(); // Auto-search
-                }
-            });
+// Check if a player hash is already in the URL when the page is loaded
+window.onload = function () {
+    const playerNameFromHash = window.location.hash.slice(1); // Get player name from the URL hash
+    if (playerNameFromHash) {
+        document.getElementById("search").value = playerNameFromHash; // Set the search input to match the player from the hash
+        searchPlayer(); // Perform the search automatically based on the hash
+    }
 
-            // Attach input event listener for live suggestions
-            document.getElementById("search").addEventListener("input", suggestPlayers);
-        };
+    loadPlayerNames().then(() => {
+        // Restore last search if available
+        const lastSearch = sessionStorage.getItem('lastSearch');
+        if (lastSearch) {
+            document.getElementById("search").value = lastSearch;
+            searchPlayer(); // Auto-search
+        }
+    });
 
-        // Preserve the last search query before reloading
-        window.addEventListener('beforeunload', function() {
-            const searchValue = document.getElementById("search").value.trim();
-            if (searchValue) {
-                sessionStorage.setItem('lastSearch', searchValue);
-            }
-        });
+    // Attach input event listener for live suggestions
+    document.getElementById("search").addEventListener("input", suggestPlayers);
+};
     </script>
 
 </head>
