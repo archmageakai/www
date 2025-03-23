@@ -201,26 +201,27 @@
         let itemsData = {};
         let bladesData = {}; // To store blade data
 
-        // Function to load the users JSON data and blades data
-        async function loadJSON() {
-            try {
-                const userResponse = await fetch('users.json', { cache: 'no-store' }); // Force no-cache to always load fresh data
-                jsonData = await userResponse.json();
+async function loadJSON() {
+    const searchInput = document.getElementById("search");
+    const currentSearch = searchInput.value; // Save the user's input
 
-                const itemsResponse = await fetch('items.json', { cache: 'no-store' });
-                itemsData = await itemsResponse.json();
+    try {
+        const userResponse = await fetch('users.json', { cache: 'no-store' });
+        jsonData = await userResponse.json();
 
-                const bladesResponse = await fetch('blade.json', { cache: 'no-store' }); // Corrected file name to blade.json
-                bladesData = await bladesResponse.json();
+        const itemsResponse = await fetch('items.json', { cache: 'no-store' });
+        itemsData = await itemsResponse.json();
 
-                // After loading the data, update the player display if there's any active search
-                if (document.getElementById("search").value) {
-                    searchPlayer();  // Re-run search with the updated data
-                }
-            } catch (error) {
-                console.error('Error loading JSON:', error);
-            }
-        }
+        const bladesResponse = await fetch('blade.json', { cache: 'no-store' });
+        bladesData = await bladesResponse.json();
+
+        // Restore the search input after loading data
+        searchInput.value = currentSearch;
+
+    } catch (error) {
+        console.error('Error loading JSON:', error);
+    }
+}
 
         // Set an interval to load new data every 1 second (1000 ms)
         setInterval(loadJSON, 1000);  // Updates every 1 second
@@ -369,26 +370,34 @@ function suggestPlayers() {
 }
 
 
-// Check if a player hash is already in the URL when the page is loaded
 window.onload = function () {
-    const playerNameFromHash = window.location.hash.slice(1); // Get player name from the URL hash
+    const searchInput = document.getElementById("search");
+    const playerNameFromHash = window.location.hash.slice(1);
+
     if (playerNameFromHash) {
-        document.getElementById("search").value = playerNameFromHash; // Set the search input to match the player from the hash
-        searchPlayer(); // Perform the search automatically based on the hash
+        searchInput.value = playerNameFromHash;
+        searchPlayer();
     }
 
     loadPlayerNames().then(() => {
-        // Restore last search if available
         const lastSearch = sessionStorage.getItem('lastSearch');
         if (lastSearch) {
-            document.getElementById("search").value = lastSearch;
-            searchPlayer(); // Auto-search
+            searchInput.value = lastSearch;
+            searchPlayer();
+        }
+    });
+
+    // Attach event listener to trigger search on Enter key press
+    searchInput.addEventListener("keypress", function(event) {
+        if (event.key === "Enter") {
+            searchPlayer();
         }
     });
 
     // Attach input event listener for live suggestions
-    document.getElementById("search").addEventListener("input", suggestPlayers);
+    searchInput.addEventListener("input", suggestPlayers);
 };
+
     </script>
 
 </head>
