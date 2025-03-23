@@ -266,6 +266,7 @@ async function searchPlayer() {
     // If there's a URL hash (e.g., #user), use that instead of the input
     if (window.location.hash) {
         playerName = decodeURIComponent(window.location.hash.substring(1)); // Decode hash part
+        document.getElementById("search").value = playerName; // Update the search bar with the decoded name
     }
 
     let player = jsonData.users.find(user => user.player_name === playerName);
@@ -308,11 +309,12 @@ async function searchPlayer() {
             resultDiv.innerHTML += `<p>No blades</p>`;
         }
 
-        window.location.hash = `#${player.player_name}`;
+        window.location.hash = `#${player.player_name}`; // Update the URL hash with the decoded player name
     } else {
         resultDiv.innerHTML = `<p>Player not found</p>`;
     }
 }
+
 
         // Load users.json and store player names
         let playerNames = [];
