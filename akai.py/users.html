@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link rel="icon" href="/favicon.ico" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
+	
+    <title>ギコっぽいの赤いネス</title>
+	
+<style>
+
+/* gachapon css start */
+
+table, th, td {
+    border: 1px solid #ff0000 !important;
+}
+
+thead {
+    background-color: #333333; /* Dark gray background */
+    color: #ff0000;  /* Red text color for the header */
+}
+
+th {
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    color: #ff0000;  /* Ensure text color is red */
+}
+
+/* Rest of your existing CSS */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    border: 1px solid #ff0000;
+    padding: 10px;
+    text-align: left;
+    vertical-align: middle;
+    color: #ff0000;  /* Red text color */
+}
+
+/* Square image cell */
+.image-cell {
+    width: 60px;  /* Set square size */
+    height: 60px; 
+    text-align: center;
+}
+
+/* Square images */
+.image-cell img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Ensures image fits without distortion */
+    display: block;
+}
+
+/* Rarity colors */
+.rarity5star { color: purple; font-weight: bold; }
+.rarity4star { color: gold; font-weight: bold; }
+.rarity3star { color: silver; }
+.rarity2star { color: red; }
+.rarity1star { color: red; }
+
+<---
+/* Highlight class */
+.highlight { background-color: maroon; }
+
+--->
+
+/* Link styles */
+.show-all-link {
+    color: maroon;
+    text-decoration: none;
+    display: block;
+    margin-top: 20px;
+}
+
+/* Button styling */
+button {
+    font-size: 16px;
+    color: #ff0000; /* Red text color */
+    font-family: "Lucida Console", "Courier New", monospace;
+    background-color: #333333; /* Dark gray background */
+    border: 1px solid #ff0000; /* Red border */
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+button:hover {
+    background-color: #ff0000; /* Red background on hover */
+    color: #ffffff; /* White text on hover */
+}
+
+/* Active button state (when the sorting button is clicked) */
+button.active {
+    background-color: #ff0000; /* Red background for active button */
+    color: #ffffff; /* White text for active button */
+    border: 1px solid #ff0000; /* Red border */
+}
+
+/* gachapon css end*/
+    </style>
+    
+    <script>
+        let jsonData = {};
+        let itemsData = {};
+        let bladesData = {}; // To store blade data
+
+        // Function to load the users JSON data and blades data
+        async function loadJSON() {
+            try {
+                const userResponse = await fetch('users.json', { cache: 'no-store' }); // Force no-cache to always load fresh data
+                jsonData = await userResponse.json();
+
+                const itemsResponse = await fetch('items.json', { cache: 'no-store' });
+                itemsData = await itemsResponse.json();
+
+                const bladesResponse = await fetch('blade.json', { cache: 'no-store' }); // Corrected file name to blade.json
+                bladesData = await bladesResponse.json();
+
+                // After loading the data, update the player display if there's any active search
+                if (document.getElementById("search").value) {
+                    searchPlayer();  // Re-run search with the updated data
+                }
+            } catch (error) {
+                console.error('Error loading JSON:', error);
+            }
+        }
+
+        // Set an interval to load new data every 1 second (1000 ms)
+        setInterval(loadJSON, 1000);  // Updates every 1 second
+
+
+
+
+        // Function to format number to string with decimals if needed
+        function formatNumber(value) {
+            if (typeof value === 'number' && !Number.isInteger(value)) {
+                return value.toFixed(2); // Ensure two decimal places for floats
+            }
+            return value.toString(); // Return as is if it's already a string or integer
+        }
+
+        // Function to get the item name based on item_ID
+        function getItemName(itemID) {
+            const item = itemsData.items.find(i => i.item_ID === itemID);
+            return item ? item.item_name : "Unknown Item"; // Return item name or "Unknown Item" if not found
+        }
+
+        // Function to get the blade name based on blade_ID
+        function getBladeName(bladeID) {
+            const blade = bladesData.blades.find(b => b.blade_ID === bladeID);
+            return blade ? blade.blade_name : "Unknown Blade"; // Return blade name or "Unknown Blade" if not found
+        }
+
+        // Function to search for a player and display their details
+        async function searchPlayer() {
+            await loadJSON(); // Always reload JSON to get the latest data
+
+            let input = document.getElementById("search").value;
+            let resultDiv = document.getElementById("result");
+            resultDiv.innerHTML = "";
+
+            if (!jsonData || !jsonData.users) {
+                resultDiv.innerHTML = "<p>Error: Data not loaded correctly.</p>";
+                return;
+            }
+
+            let player = jsonData.users.find(user => user.player_name === input);
+
+            if (player) {
+                let yen = formatNumber(player.currencies.yen);
+                let grossYen = formatNumber(player.currencies.gross_yen);
+                let todayGacha = formatNumber(player.gacha.today);
+                let guaranteeGacha = formatNumber(player.gacha.guarantee);
+                let totalGacha = formatNumber(player.gacha.total);
+
+                resultDiv.innerHTML += `<h1>${player.player_name}</h1>`;
+
+                // Commented out yen, until converted akaiyen.py to JSON
+                // resultDiv.innerHTML += `<h3>Currencies</h3>`;
+                // resultDiv.innerHTML += `<p>Yen: ${yen}</p>`;
+                // resultDiv.innerHTML += `<p>Gross Yen: ${grossYen}</p>`;
+
+                resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
+                resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
+
+                // Displaying Items
+                resultDiv.innerHTML += `<u><strong>Inventory</strong></u>`;
+                if (Object.keys(player.items).length > 0) {
+                    let itemIndex = 1; // Start item numbering from 1
+                    Object.entries(player.items).forEach(([key, value]) => {
+                        // Convert item ID to string and match it to the item name
+                        let itemName = getItemName(parseFloat(key));
+                        resultDiv.innerHTML += `<p>${itemIndex}. [ID ${key}] <a href="testitems.html#${key}">${itemName}</a> x ${value}</p>`;
+                        itemIndex++; // Increment the item number
+                    });
+                } else {
+                    resultDiv.innerHTML += `<p>No items</p>`;
+                }
+
+                // Displaying Blades
+                resultDiv.innerHTML += `<u><strong>Blades</strong></u>`;
+                if (Object.keys(player.blades).length > 0) {
+                    let bladeIndex = 1; // Start blade numbering from 1
+                    Object.entries(player.blades).forEach(([key, value]) => {
+                        let bladeName = getBladeName(parseFloat(key));
+                        resultDiv.innerHTML += `<p>${bladeIndex}. [ID ${key}] <a href="testblades.html#${key}">${bladeName}</a> <br>
+                            Slots (Available: ${value.core_slots.available}, Used: ${value.core_slots.used}, Broken: ${value.core_slots.broken})</p>`;
+                        bladeIndex++; // Increment the blade number
+                    });
+                } else {
+                    resultDiv.innerHTML += `<p>No blades</p>`;
+                }
+
+                window.location.hash = `#${player.player_name}`;
+            } else {
+                resultDiv.innerHTML = `<p>Player not found</p>`;
+            }
+        }
+
+        // Load users.json and store player names
+        let playerNames = [];
+
+        async function loadPlayerNames() {
+            try {
+                const response = await fetch('users.json', { cache: 'no-store' });
+                const data = await response.json();
+                playerNames = data.users.map(user => user.player_name);
+            } catch (error) {
+                console.error('Error loading player names:', error);
+            }
+        }
+
+function suggestPlayers() {
+    let input = document.getElementById("search").value.toLowerCase().trim();
+    let suggestionsDiv = document.getElementById("suggestions");
+    suggestionsDiv.innerHTML = ""; // Clear previous suggestions
+
+    if (!input) {
+        suggestionsDiv.style.display = "none"; // Hide suggestions if input is empty
+        return; // Exit if input is empty
+    }
+
+    // Find matching player names that contain the input (case-insensitive)
+    let matches = playerNames.filter(name => 
+        name.toLowerCase().includes(input) && input.length > 0 // Ensure input length is more than 0
+    ).slice(0, 5); // Limit to 5 suggestions
+
+    if (matches.length === 0) {
+        suggestionsDiv.style.display = "none"; // Hide suggestions if no matches found
+        return;
+    }
+
+    // Show suggestions box
+    suggestionsDiv.style.display = "block";
+
+    matches.forEach(name => {
+        let suggestion = document.createElement("div");
+        suggestion.classList.add("suggestion");
+        suggestion.textContent = name;
+
+        suggestion.onclick = () => {
+            document.getElementById("search").value = name;
+            suggestionsDiv.innerHTML = ""; // Clear the suggestions box after a suggestion is clicked
+            suggestionsDiv.style.display = "none"; // Hide the suggestions box
+            searchPlayer(); // Perform the search automatically
+        };
+
+        suggestionsDiv.appendChild(suggestion);
+    });
+}
+
+
+        // Load player names when the page loads
+        window.onload = function () {
+            loadPlayerNames().then(() => {
+                // Restore last search if available
+                const lastSearch = sessionStorage.getItem('lastSearch');
+                if (lastSearch) {
+                    document.getElementById("search").value = lastSearch;
+                    searchPlayer(); // Auto-search
+                }
+            });
+
+            // Attach input event listener for live suggestions
+            document.getElementById("search").addEventListener("input", suggestPlayers);
+        };
+
+        // Preserve the last search query before reloading
+        window.addEventListener('beforeunload', function() {
+            const searchValue = document.getElementById("search").value.trim();
+            if (searchValue) {
+                sessionStorage.setItem('lastSearch', searchValue);
+            }
+        });
+    </script>
+
+</head>
+<body>
+    <strong>Player index</strong><br>
+    <input type="text" id="search" placeholder="Enter player name" autocomplete="off">
+    <button onclick="searchPlayer()">Search</button>
+	<div id="suggestions" class="suggestions-box"></div>
+    <div id="result"></div>
+</body>
+</html>
