@@ -64,7 +64,7 @@ function updateDisplay(forceUpdate = false) {
         return;
     }
 
-    let playerName = decodeURIComponent(window.location.hash.slice(1)).trim();
+    let playerName = decodeURIComponent(window.location.hash.slice(1));
 
     if (!playerName) {
         
