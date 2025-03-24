@@ -72,7 +72,7 @@ function updateDisplay(forceUpdate = false) {
         jsonData.users
             .sort((a, b) => a.player_name.localeCompare(b.player_name, 'en', { numeric: true }))
             .forEach(user => {
-                resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name}</a></li>`;
+                resultDiv.innerHTML += `<li><a href="users.html#${encodeURIComponent(user.player_name)}">${user.player_name.replace(/ /g, '&nbsp;')}</a></li>`;
             });
         resultDiv.innerHTML += "</ul>";
         return;
