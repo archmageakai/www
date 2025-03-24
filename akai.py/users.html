@@ -91,7 +91,7 @@ function updateDisplay(forceUpdate = false) {
         let guaranteeGacha = formatNumber(player.gacha.guarantee);
         let totalGacha = formatNumber(player.gacha.total);
 
-        resultDiv.innerHTML = `<strong>"${player.player_name.replace(/ /g, '&nbsp;')}"</strong><br>`;
+        resultDiv.innerHTML = `<strong>${player.player_name.replace(/ /g, '&nbsp;')}</strong><br>`;
         resultDiv.innerHTML += `<u><strong>Gacha</strong></u>`;
         resultDiv.innerHTML += `<p>Today: ${todayGacha} / Guarantee: ${guaranteeGacha} / Total: ${totalGacha}</p>`;
 
