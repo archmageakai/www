@@ -55,7 +55,6 @@ th, td {
 .image-cell img {
     width: 100%;
     height: 100%;
-    object-fit: contain; /* Ensures image fits without distortion */
     display: block;
 }
 
@@ -195,7 +194,7 @@ function displayItems(items) {
         const img = document.createElement("img");
         img.src = `/image/akai.py/items/${item.item_ID}.png`;  // Ensure image path is correct
         img.alt = item.item_name;
-        //imgCell.appendChild(img);
+        imgCell.appendChild(img);
 
         // Name + Type + Description Cell + moreLink
         const itemCell = document.createElement("td");
