@@ -98,8 +98,7 @@ button.active {
 
 /* Apply red background to the first column (excluding header) */
 #itemTable tbody td:first-child {
-    background-color: red;
-    color: white; /* Optional: Makes text more readable */
+    background-color: #333333;
 }
 
 /* gachapon css end*/
@@ -218,7 +217,7 @@ function displaySingleItem(itemId) {
         const imgCell = document.createElement("td");
         imgCell.classList.add("image-cell");
         const img = document.createElement("img");
-        img.src = `/images/akai.py/${item.item_ID}.png`;  // Ensure image path is correct
+        img.src = `/image/akai.py/items/${item.item_ID}.png`;  // Ensure image path is correct
         img.alt = "img";
         imgCell.appendChild(img);
 
