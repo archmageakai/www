@@ -323,29 +323,29 @@ function sortItemsByRarity() {
             const rarityOrder = { "5-star": 5, "4-star": 4, "3-star": 3, "2-star": 2, "1-star": 1 };
             return rarityOrder[b.Rarity] - rarityOrder[a.Rarity];
         });
-        rarityFirstClick = false;
+        rarityFirstClick = false; // *
     } else {
-        sortOrderRarity = !sortOrderRarity;
-        items.sort((a, b) => {
-            const rarityOrder = { "5-star": 5, "4-star": 4, "3-star": 3, "2-star": 2, "1-star": 1 };
-            return sortOrderRarity ? rarityOrder[b.Rarity] - rarityOrder[a.Rarity] : rarityOrder[a.Rarity] - rarityOrder[b.Rarity];
-        });
+        rarityFirstClick = true; // *
+        items.reverse();
     }
+
+    alphabeticalFirstClick = true; // *
     displayItems(items);
 }
 
 function sortItemsAlphabetically() {
     if (alphabeticalFirstClick) {
         items.sort((a, b) => a.item_name.localeCompare(b.item_name));
-        alphabeticalFirstClick = false;
-        idFirstClick = false;
-        rarityFirstClick = true;
+        alphabeticalFirstClick = false; // *
     } else {
-        sortOrderAlphabetical = !sortOrderAlphabetical;
-        items.sort((a, b) => sortOrderAlphabetical ? a.item_name.localeCompare(b.item_name) : b.item_name.localeCompare(a.item_name));
+        alphabeticalFirstClick = true; // *
+        items.reverse();
     }
+
+    rarityFirstClick = true; // *
     displayItems(items);
 }
+
 
 window.onload = function() {
     loadItems();

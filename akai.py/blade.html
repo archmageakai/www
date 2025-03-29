@@ -313,36 +313,34 @@ function hideButtonsIfNeeded() {
 }
 
 let alphabeticalFirstClick = true; 
-let idFirstClick = false;
 let rarityFirstClick = true;
 
 function sortBladesByRarity() {
     if (rarityFirstClick) {
+        rarityFirstClick = false; // *
         blades.sort((a, b) => {
             const rarityOrder = { "5-star": 5, "4-star": 4, "3-star": 3, "2-star": 2, "1-star": 1 };
             return rarityOrder[b.Rarity] - rarityOrder[a.Rarity];
         });
-        rarityFirstClick = false;
     } else {
-        sortOrderRarity = !sortOrderRarity;
-        blades.sort((a, b) => {
-            const rarityOrder = { "5-star": 5, "4-star": 4, "3-star": 3, "2-star": 2, "1-star": 1 };
-            return sortOrderRarity ? rarityOrder[b.Rarity] - rarityOrder[a.Rarity] : rarityOrder[a.Rarity] - rarityOrder[b.Rarity];
-        });
+        rarityFirstClick = true; // *
+        blades.reverse();
     }
+    
+    alphabeticalFirstClick = true; // *
     displayBlades(blades);
 }
 
 function sortBladesAlphabetically() {
     if (alphabeticalFirstClick) {
+        alphabeticalFirstClick = false; // *
         blades.sort((a, b) => a.blade_name.localeCompare(b.blade_name));
-        alphabeticalFirstClick = false;
-        idFirstClick = false;
-        rarityFirstClick = true;
     } else {
-        sortOrderAlphabetical = !sortOrderAlphabetical;
-        blades.sort((a, b) => sortOrderAlphabetical ? a.blade_name.localeCompare(b.blade_name) : b.blade_name.localeCompare(a.blade_name));
+        alphabeticalFirstClick = true; // *
+        blades.reverse();
     }
+
+    rarityFirstClick = true; // *
     displayBlades(blades);
 }
 
