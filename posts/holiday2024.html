@@ -5,6 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link id="theme-link" rel="stylesheet" href="/css/style.css" />
+<script>
+  const themeLink = document.getElementById('theme-link');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+      themeLink.href = savedTheme;
+  } else {
+      themeLink.href = 'style.css';
+  }
+</script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	<link rel="alternate" type="application/atom+xml" href="/index.atom" title="akai.gikopoi.com">
@@ -12,6 +22,7 @@
     <title>ギコっぽいの赤いネス</title>
 
 </head>
+
 <body>
 <header>
 
@@ -32,7 +43,6 @@
 <main>
 ♡ <br><strong><u>Gikopoi Holiday 2024</u></strong><br>
 <time datetime="2025-01-08T22:11:16-05:00">January 8, 2025 :: 22:11 [UTC -05:00]</time>
-
 <p>It is now 2025, but we got to end 2024 on a good note at Gikopoi.</p>
 <p>This is just a recap of my fun on Gikopoi for Holidays 2024.</p>
 <p>I've been pretty active streaming, especially when #AFK. I usually stream a lot of Nightcore playlists, but I change it up too sometimes with a variety of content.</p>

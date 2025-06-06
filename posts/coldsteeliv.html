@@ -5,6 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link id="theme-link" rel="stylesheet" href="/css/style.css" />
+<script>
+  const themeLink = document.getElementById('theme-link');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+      themeLink.href = savedTheme;
+  } else {
+      themeLink.href = 'style.css';
+  }
+</script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	<link rel="alternate" type="application/atom+xml" href="/index.atom" title="akai.gikopoi.com">
@@ -12,6 +22,7 @@
     <title>ギコっぽいの赤いネス</title>
 
 </head>
+
 <body>
 <header>
 
@@ -32,7 +43,6 @@
 <main>
 ♡ <br><strong><u>The Legend of Heroes: Trails of Cold Steel IV [Game Review]</u></strong><br>
 <time datetime="2025-01-15T23:06:48-05:00">January 15, 2025 :: 23:06 [UTC -05:00]</time>
-
 
 <p><img src="/image/wiz.png"> <em>TL;DR</em></p>
 <blockquote>

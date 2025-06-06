@@ -5,6 +5,16 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="/css/style.css">
+    <link id="theme-link" rel="stylesheet" href="/css/style.css" />
+<script>
+  const themeLink = document.getElementById('theme-link');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme) {
+      themeLink.href = savedTheme;
+  } else {
+      themeLink.href = 'style.css';
+  }
+</script>
     <link rel="icon" href="/favicon.ico" type="image/x-icon" />
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon" />
 	<link rel="alternate" type="application/atom+xml" href="/index.atom" title="akai.gikopoi.com">
@@ -12,6 +22,7 @@
     <title>ギコっぽいの赤いネス</title>
 
 </head>
+
 <body>
 <header>
 
@@ -32,7 +43,6 @@
 <main>
 ♡ <br><strong><u>Pokemon Day Japan 29 Years</u></strong><br>
 <time datetime="2025-02-26T18:49:26-05:00">February 26, 2025 :: 18:49 [UTC -05:00]</time>
-
 <p><i>Happy Pokemon Day!</i></p>
 <p><u>2/27/96</u> - <i>Pokemon Red and Green</i> were released for Gameboy in Japan.</p>
 <p>These games were not localized and released (under Red and Blue titles in the West) until later, but it is this day that we celebrate the birth of a franchise that changed a lot of our lives. These are not necessarily the greatest in the core series by far, but they set the stage. I have my criticisms with the direction of the newer titles, but this article is more about nostalgia and giving thanks to 29 years of Pokemon. Today, there is still much to enjoy in the new of the series and a lot of the old worth exploring and re-exploring.</p>
