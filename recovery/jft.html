@@ -49,7 +49,7 @@ fetch(filePath)
         }
 
         if (lastIndex >= 0) {
-            lines[lastIndex] = lines[lastIndex].replace(/^(Just for today)(:)?/, '<u>$1</u>$2');
+            lines[lastIndex] = lines[lastIndex].replace(/^(Just for today)(:)?/, '<strong><u>$1</u></strong>$2');
         }
 
         // Wrap each line in a <p>
