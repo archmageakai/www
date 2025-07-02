@@ -2,7 +2,7 @@
 <feed xmlns="http://www.w3.org/2005/Atom">
 <id>https://akai.gikopoi.com/</id>
 <title>akai.gikopoi.com</title>
-<updated>2025-07-02T16:35:47+00:00</updated>
+<updated>2025-07-02T16:38:49+00:00</updated>
 <generator>https://github.com/archmageakai/gikoru</generator>
 <author>
   <name>akai</name>
@@ -125,7 +125,7 @@ Considered by many to be a hollow shell of the original world2ch, and I won't go
 </p>
 
 <p>
-This textboard has a lot of potential, but the admin can't get over their self. Most boards use futaba or buun theme or some derivative of that, and they are basically 2ch ver 5000.0 or something. This site is not trying to be that at all. I like that this is just a stream of consciousness. There are no threads or boards or trees yet it has the DNA of a textboard. This site reminds me of <a href="https://postzone.app">https://postzone.app</a>, and it can be a lot better too. Tripcodes and secure tripcodes use SHA-256 and SHA-512 respectively (rather than DES and SHA-1 which are the standards for Nipponese-styled boards)&#x2026;. I really don't like that inconsistency. There are also open hours between 08:00 to 22:00 UTC. ("Quirky") &#x2026; No source code available, so another thumbs down there.
+This textboard has a lot of potential, but the admin can't get over their self. Most boards use futaba or buun theme or some derivative of that, and they are basically 2ch ver 5000.0 or something. This site is not trying to be that at all. I like that this is just a stream of consciousness. There are no threads or boards or trees yet it has the DNA of a textboard. This site reminds me of <a href="https://postzone.app">https://postzone.app</a>, and it can be a lot better too. Tripcodes and secure tripcodes use SHA-256 and SHA-512 respectively (rather than DES and SHA-1 which are the standards for Nipponese-styled boards). I really don't like that inconsistency. There are also open hours between 08:00 to 22:00 UTC. ("Quirky"). No source code available, so another thumbs down there.
 </p>
 
 <p>
